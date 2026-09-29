@@ -28,6 +28,42 @@ FastAPI REST API --> React kliens
 Térkép, grafikonok és hőtérképek
 ```
 
+### Komponensdiagram
+
+```mermaid
+flowchart LR
+        gbfs["MOL Bubi GBFS-feed"]
+
+        subgraph backend["Backend"]
+                collector["GBFS-gyűjtő"]
+                api["FastAPI REST API"]
+                analytics["Elemzési szolgáltatás"]
+        end
+
+        subgraph storage["Adattárolás"]
+                database[("PostgreSQL")]
+        end
+
+        subgraph frontend["React kliens"]
+                map["Térképes nézet"]
+                station["Állomás részletei és idősor"]
+                charts["Grafikonok és hőtérképek"]
+        end
+
+        gbfs -->|"letöltés"| collector
+        collector --> database
+        database --> api
+        database --> analytics
+        analytics --> api
+        api -->|"aktuális állapot"| map
+        api -->|"állomási előzmények"| station
+        api -->|"átlagok, események, áramlások"| charts
+```
+
+Az adatgyűjtés a GBFS-feedből indul, a validált állomás- és snapshotadatok
+PostgreSQL-ben tárolódnak. A FastAPI REST API szolgálja ki a React kliens
+térképes és elemzési nézeteit.
+
 
 Tervezett API-végpontok:
 
