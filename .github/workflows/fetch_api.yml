@@ -24,7 +24,7 @@ jobs:
           curl --fail --silent --show-error \
             -H "Accept: application/json" \
             "https://gbfs.urbansharing.com/molbubi.hu/free_bike_status.json" \
-            -o "$FILE"
+            -o data/"$FILE"
 
           echo "Created $FILE"
 
