@@ -20,11 +20,11 @@ jobs:
         run: |
           TIMESTAMP=$(date -u +"%Y%m%d-%H%M%S")
           FILE="data-${TIMESTAMP}.json"
-
+          cd data
           curl --fail --silent --show-error \
             -H "Accept: application/json" \
             "https://gbfs.urbansharing.com/molbubi.hu/free_bike_status.json" \
-            -o data/"$FILE"
+            -o "$FILE"
 
           echo "Created $FILE"
 
