@@ -13,15 +13,6 @@ Az alkalmazás fő funkciói:
 - üres és teli állomások gyakoriságának hőtérképe
 - bővítésként becsült ki- és berakási forgalom, nettó áramlás, forrás- és nyelőállomások
 
-### Fő adatok
-
-| Entitás | Példafimezők |
-|---|---|
-| Állomás | azonosító, név, koordináta, kapacitás |
-| Állapotsnapshot | időpont, elérhető bicikli, szabad dokkoló |
-| Esemény | üres, teli, helyreállás, adatminőségi hiba |
-| Gyűjtési futás | kezdés, befejezés, állapot, forrás, checksum |
-
 ## Statikus terv
 
 ```text
