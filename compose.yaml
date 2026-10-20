@@ -2,13 +2,13 @@
 services:
   frontend:
     build:
-      context: ./frontend
+      context: ./bubi-map-frontend
     container_name: myapp-frontend
     restart: unless-stopped
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
+      - ./bubi-map-frontend:/app
       - /app/node_modules
     depends_on:
       backend:
