@@ -1,5 +1,27 @@
 # Getting Started with Create React App
 
+## Frontend felépítése
+
+Az alkalmazás backend nélkül is futtatható lokális mintaadatokkal. A kód rétegei:
+
+- `src/components/` - újrahasznosítható UI-, térkép- és grafikonkomponensek
+- `src/views/` - képernyőszintű nézetek
+- `src/data/mockData.js` - backend-sémát helyettesítő fejlesztői adatok
+- `src/services/stationApi.js` - az állomásadatok egyetlen API-belépési pontja
+- `src/services/analyticsApi.js` - áttekintési és állomásonkénti analitikai adatok
+- `src/styles/` - alkalmazásszintű stílusok
+
+Backend bekötéséhez állítsd be a `VITE_API_BASE_URL` változót, majd kapcsold ki a
+mock adatokat a `VITE_USE_MOCK_DATA=false` értékkel. Az API-hívásokat a
+`src/services/stationApi.js` kezeli, így a nézeteknek nem kell közvetlenül
+`fetch`-et használniuk.
+
+Az állomásrészletek a következő analitikai service-metódusokat használják:
+
+- `getStationHistory(id)` - állomási idősor
+- `getStationUtilization(id)` - napi átlagos kihasználtság
+- `getStationEvents(id)` - esemény-hőtérkép adatai
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

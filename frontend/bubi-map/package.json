@@ -1,17 +1,24 @@
-
 {
   "name": "myapp-frontend",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\""
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "leaflet": "^1.9.4",
+    "leaflet.heat": "^0.2.0",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-leaflet": "^5.0.0",
+    "recharts": "^3.10.1",
+    "vite": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  }
 }
