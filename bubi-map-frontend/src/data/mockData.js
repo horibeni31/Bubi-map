@@ -1,0 +1,143 @@
+export const stations = [
+  {
+    id: 1,
+    name: "Deák Ferenc tér",
+    position: [47.4979, 19.0547],
+    bikes: 12,
+    docks: 8,
+    capacity: 20,
+    status: "normal",
+  },
+  {
+    id: 2,
+    name: "Nyugati tér",
+    position: [47.5102, 19.056],
+    bikes: 8,
+    docks: 20,
+    capacity: 28,
+    status: "low",
+  },
+  {
+    id: 3,
+    name: "Müegyetem rakpart",
+    position: [47.481, 19.046],
+    bikes: 26,
+    docks: 4,
+    capacity: 30,
+    status: "normal",
+  },
+  {
+    id: 4,
+    name: "Keleti pályaudvar",
+    position: [47.5007, 19.0814],
+    bikes: 5,
+    docks: 25,
+    capacity: 30,
+    status: "empty",
+  },
+  {
+    id: 5,
+    name: "WestEnd",
+    position: [47.514, 19.061],
+    bikes: 31,
+    docks: 2,
+    capacity: 33,
+    status: "full",
+  },
+  {
+    id: 6,
+    name: "Oktogon",
+    position: [47.505, 19.063],
+    bikes: 16,
+    docks: 12,
+    capacity: 28,
+    status: "normal",
+  },
+  {
+    id: 7,
+    name: "Kálvin tér",
+    position: [47.489, 19.061],
+    bikes: 3,
+    docks: 22,
+    capacity: 25,
+    status: "low",
+  },
+  {
+    id: 8,
+    name: "Széll Kálmán tér",
+    position: [47.507, 19.024],
+    bikes: 20,
+    docks: 9,
+    capacity: 29,
+    status: "normal",
+  },
+  {
+    id: 9,
+    name: "Boráros tér",
+    position: [47.479, 19.067],
+    bikes: 0,
+    docks: 18,
+    capacity: 18,
+    status: "empty",
+  },
+  {
+    id: 10,
+    name: "Móricz Zsigmond körtér",
+    position: [47.477, 19.047],
+    bikes: 14,
+    docks: 7,
+    capacity: 21,
+    status: "normal",
+  },
+];
+
+export const timeline = [
+  { time: "00:00", bikes: 8, docks: 5 },
+  { time: "03:00", bikes: 5, docks: 7 },
+  { time: "06:00", bikes: 7, docks: 4 },
+  { time: "09:00", bikes: 11, docks: 6 },
+  { time: "12:00", bikes: 14, docks: 5 },
+  { time: "15:00", bikes: 12, docks: 4 },
+  { time: "18:00", bikes: 16, docks: 8 },
+  { time: "21:00", bikes: 12, docks: 6 },
+  { time: "24:00", bikes: 15, docks: 7 },
+];
+
+export const hourlyUsage = [
+  { name: "0-3", value: 22 },
+  { name: "3-6", value: 25 },
+  { name: "6-9", value: 43 },
+  { name: "9-12", value: 52 },
+  { name: "12-15", value: 67 },
+  { name: "15-18", value: 83 },
+  { name: "18-21", value: 63 },
+  { name: "21-24", value: 50 },
+];
+
+export const weeklyUsage = [
+  { name: "Hét", value: 54 },
+  { name: "Kedd", value: 64 },
+  { name: "Sze", value: 71 },
+  { name: "Csüt", value: 77 },
+  { name: "Pén", value: 80 },
+  { name: "Szom", value: 76 },
+  { name: "Vas", value: 69 },
+];
+
+export const navItems = [
+  ["overview", "Áttekintés"],
+  ["map", "Térkép"],
+  ["stations", "Állomások"],
+  ["timeline", "Idősorok"],
+  ["usage", "Kihasználtság"],
+  ["events", "Hőtérkép"],
+  ["flows", "Forgalom"],
+  ["reports", "Jelentések"],
+];
+
+export const statusInfo = {
+  normal: { label: "Normál" },
+  low: { label: "Kevés kerékpár" },
+  empty: { label: "Nincs dokkoló" },
+  full: { label: "Tele állomás" },
+};

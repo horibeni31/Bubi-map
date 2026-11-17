@@ -1,122 +1,79 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useMemo, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import "./styles/app.css";
+import { AppShell } from "./components/layout/AppShell";
+import { DashboardView } from "./views/DashboardView";
+import { StandaloneView } from "./views/StandaloneView";
+import { StationDetailView } from "./views/StationDetailView";
+import { navItems } from "./data/mockData";
+import { stationApi } from "./services/stationApi";
+import { analyticsApi } from "./services/analyticsApi";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activeView, setActiveView] = useState("overview");
+  const [stations, setStations] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [selectedStation, setSelectedStation] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([stationApi.getStations(), analyticsApi.getOverview()])
+      .then(([loadedStations, loadedAnalytics]) => {
+        setStations(loadedStations);
+        setSelectedStation(loadedStations[0] || null);
+        setAnalytics(loadedAnalytics);
+      })
+      .catch((error) => setLoadError(error))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const title = useMemo(
+    () => navItems.find(([id]) => id === activeView)?.[1] || "Áttekintés",
+    [activeView],
+  );
+  const content = loadError ? (
+    <p className="empty-state">
+      Nem sikerült betölteni az állomásadatokat: {loadError.message}
+    </p>
+  ) : activeView === "overview" ? (
+    <DashboardView
+      stations={stations}
+      analytics={analytics}
+      selectedStation={selectedStation}
+      onSelect={setSelectedStation}
+    />
+  ) : activeView === "stations" ? (
+    <StationDetailView
+      station={selectedStation || stations[0]}
+      stations={stations}
+      onSelect={setSelectedStation}
+    />
+  ) : (
+    <StandaloneView
+      view={activeView}
+      stations={stations}
+      analytics={analytics}
+      selectedStation={selectedStation}
+      onSelect={setSelectedStation}
+    />
+  );
+
+  if (isLoading || !analytics) {
+    return <div className="loading-state">Állomásadatok betöltése…</div>;
+  }
+
+  if (!selectedStation && !loadError) {
+    return (
+      <div className="loading-state">Nincs megjeleníthető állomásadat.</div>
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <AppShell activeView={activeView} onNavigate={setActiveView} title={title}>
+      {content}
+    </AppShell>
+  );
 }
 
-export default App
+export default App;
