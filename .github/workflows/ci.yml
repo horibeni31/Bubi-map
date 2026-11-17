@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Throwaway credentials, used only by the CI database container.
+  POSTGRES_DB: bubi
+  POSTGRES_USER: bubi
+  POSTGRES_PASSWORD: bubi-ci
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validate compose file
+        run: docker compose config --quiet
+
+      - name: Build images
+        run: docker compose build
+
+      - name: Start stack
+        run: docker compose up -d --wait --wait-timeout 120
+
+      - name: Smoke test backend
+        run: |
+          curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors \
+            http://localhost:8000/docs -o /dev/null
+          curl --fail --silent --show-error http://localhost:8000/stations -o /dev/null
+
+      - name: Smoke test frontend
+        run: |
+          curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors \
+            http://localhost:5173/ -o /dev/null
+
+      - name: Show logs
+        if: failure()
+        run: docker compose logs
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
