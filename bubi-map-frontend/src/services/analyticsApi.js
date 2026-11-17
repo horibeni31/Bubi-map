@@ -1,7 +1,11 @@
 import { hourlyUsage, timeline, weeklyUsage } from "../data/mockData";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA !== "false";
+// The backend has no analytics endpoints yet, so these stay on mock data
+// unless explicitly turned off.
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_ANALYTICS !== "false";
+
+export const isAnalyticsMock = USE_MOCK_DATA;
 
 async function request(path) {
   const response = await fetch(`${API_BASE_URL}${path}`);

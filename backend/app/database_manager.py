@@ -13,11 +13,62 @@ def get_bike(bike_id: int):
 def get_bikes():
     return {"bikes": []}
 
-def get_stations():
-    return {"stations": []}
+_STATION_QUERY = """
+    SELECT s.station_id, s.name, s.address, s.latitude, s.longitude, s.capacity, s.is_virtual_station,
+           st.num_bikes_available, st.num_docks_available, st.is_installed, st.is_renting,
+           st.is_returning, st.last_reported, st.feed_updated_at
+    FROM stations s
+    LEFT JOIN LATERAL (
+        SELECT * FROM station_status
+        WHERE station_status.station_id = s.station_id
+        ORDER BY feed_updated_at DESC
+        LIMIT 1
+    ) st ON TRUE
+"""
 
-def get_station(station_id: int):
-    return {"station_id": station_id, "name": "Station Name", "lat": 0.0, "lon": 0.0}
+
+def _station_row_to_dict(row):
+    (station_id, name, address, lat, lon, capacity, is_virtual, bikes, docks,
+     is_installed, is_renting, is_returning, last_reported, feed_updated_at) = row
+    return {
+        "station_id": station_id,
+        "name": name,
+        "address": address,
+        "lat": float(lat),
+        "lon": float(lon),
+        "capacity": capacity,
+        "is_virtual_station": is_virtual,
+        "num_bikes_available": bikes,
+        "num_docks_available": docks,
+        "is_installed": is_installed,
+        "is_renting": is_renting,
+        "is_returning": is_returning,
+        "last_reported": last_reported.isoformat() if last_reported else None,
+        "feed_updated_at": feed_updated_at.isoformat() if feed_updated_at else None,
+    }
+
+
+def get_stations():
+    """All stations with their most recent status."""
+    conn = connect_to_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(_STATION_QUERY + " ORDER BY s.name")
+            return {"stations": [_station_row_to_dict(r) for r in cur.fetchall()]}
+    finally:
+        conn.close()
+
+
+def get_station(station_id: str):
+    """One station with its most recent status, or None if it does not exist."""
+    conn = connect_to_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(_STATION_QUERY + " WHERE s.station_id = %s", (station_id,))
+            row = cur.fetchone()
+            return _station_row_to_dict(row) if row else None
+    finally:
+        conn.close()
 
 
 def connect_to_db():

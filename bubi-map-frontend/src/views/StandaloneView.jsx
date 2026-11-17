@@ -1,3 +1,6 @@
+import { MockWatermark } from "../components/common/MockWatermark";
+import { isAnalyticsMock } from "../services/analyticsApi";
+import { isStationDataMock } from "../services/stationApi";
 import { SectionTitle } from "../components/common/SectionTitle";
 import { UsageCharts } from "../components/charts/Charts";
 import { StationMap } from "../components/map/StationMap";
@@ -15,11 +18,13 @@ export function StandaloneView({
     return (
       <section className="card full-map">
         <SectionTitle>Térkép</SectionTitle>
-        <StationMap
-          stations={stations}
-          selectedStation={selectedStation}
-          onSelect={onSelect}
-        />
+        <MockWatermark active={isStationDataMock}>
+          <StationMap
+            stations={stations}
+            selectedStation={selectedStation}
+            onSelect={onSelect}
+          />
+        </MockWatermark>
       </section>
     );
   }
@@ -27,7 +32,10 @@ export function StandaloneView({
     return (
       <section className="card full-map">
         <SectionTitle>Hőtérkép</SectionTitle>
-        <EventHeatmapMap stations={stations} />
+        {/* Intensities are generated, only positions are real */}
+        <MockWatermark>
+          <EventHeatmapMap stations={stations} />
+        </MockWatermark>
       </section>
     );
   }
@@ -45,10 +53,12 @@ export function StandaloneView({
     return (
       <section className="card standalone usage-view">
         <SectionTitle>Átlagos kihasználtság</SectionTitle>
-        <UsageCharts
-          hourlyData={analytics.hourlyUsage}
-          weeklyData={analytics.weeklyUsage}
-        />
+        <MockWatermark active={isAnalyticsMock}>
+          <UsageCharts
+            hourlyData={analytics.hourlyUsage}
+            weeklyData={analytics.weeklyUsage}
+          />
+        </MockWatermark>
       </section>
     );
   }
@@ -64,17 +74,20 @@ export function StandaloneView({
               onSelect={onSelect}
             />
           </div>
-          <ol>
-            <li>
-              Müegyetem rakpart <b>+42</b>
-            </li>
-            <li>
-              WestEnd <b>+38</b>
-            </li>
-            <li>
-              Keleti pályaudvar <b>+31</b>
-            </li>
-          </ol>
+          {/* Hardcoded ranking */}
+          <MockWatermark>
+            <ol>
+              <li>
+                Müegyetem rakpart <b>+42</b>
+              </li>
+              <li>
+                WestEnd <b>+38</b>
+              </li>
+              <li>
+                Keleti pályaudvar <b>+31</b>
+              </li>
+            </ol>
+          </MockWatermark>
         </div>
       </section>
     );

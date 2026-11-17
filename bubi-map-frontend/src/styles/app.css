@@ -757,3 +757,37 @@ h1 {
     padding: 2px;
   }
 }
+
+/* Mock data watermark */
+.mock-watermark-host {
+  position: relative;
+}
+.mock-watermark {
+  position: absolute;
+  inset: 0;
+  /* Above Leaflet panes and controls (z-index up to 1000) */
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0 22px,
+    rgba(220, 38, 38, 0.05) 22px 44px
+  );
+}
+.mock-watermark span {
+  transform: rotate(-18deg);
+  padding: 2px 10px;
+  border: 2px solid rgba(220, 38, 38, 0.45);
+  border-radius: 4px;
+  color: rgba(220, 38, 38, 0.55);
+  font-size: clamp(0.8rem, 2.2vw, 1.4rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  user-select: none;
+}
