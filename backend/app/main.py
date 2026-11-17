@@ -43,8 +43,11 @@ def get_bike_endpoint(bike_id: int):
     return get_bike(bike_id)
 
 @app.get("/station/{station_id}")
-def get_station_endpoint(station_id: int):
-    return get_station(station_id)
+def get_station_endpoint(station_id: str):
+    station = get_station(station_id)
+    if station is None:
+        raise HTTPException(status_code=404, detail="Station not found")
+    return station
 
 @app.get("/stations")
 def get_stations_endpoint():

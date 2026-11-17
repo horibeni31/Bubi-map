@@ -6,7 +6,8 @@ import {
   TimelineChart,
 } from "../components/charts/Charts";
 import { statusInfo } from "../data/mockData";
-import { analyticsApi } from "../services/analyticsApi";
+import { analyticsApi, isAnalyticsMock } from "../services/analyticsApi";
+import { MockWatermark } from "../components/common/MockWatermark";
 
 export function StationDetailView({ station, stations = [], onSelect }) {
   const [history, setHistory] = useState([]);
@@ -54,7 +55,7 @@ export function StationDetailView({ station, stations = [], onSelect }) {
       <div className="detail-heading">
         <div>
           <span className="station-dot" /> <strong>{current.name}</strong>
-          <small>1052 Budapest, {current.name}</small>
+          <small>{current.address || current.name}</small>
         </div>
         <label className="station-selector">
           <span>Állomás kiválasztása</span>
@@ -100,7 +101,9 @@ export function StationDetailView({ station, stations = [], onSelect }) {
               Nem sikerült betölteni az idősoradatokat: {historyError.message}
             </p>
           ) : (
-            <TimelineChart key={current.id} data={history} height={240} />
+            <MockWatermark active={isAnalyticsMock}>
+              <TimelineChart key={current.id} data={history} height={240} />
+            </MockWatermark>
           )}
         </section>
         <section className="card detail-gauge">
@@ -112,7 +115,9 @@ export function StationDetailView({ station, stations = [], onSelect }) {
               Nem sikerült betölteni a kihasználtságot.
             </p>
           ) : (
-            <Gauge value={utilization} />
+            <MockWatermark active={isAnalyticsMock}>
+              <Gauge value={utilization} />
+            </MockWatermark>
           )}
         </section>
         <section className="card">
@@ -124,7 +129,9 @@ export function StationDetailView({ station, stations = [], onSelect }) {
               Nem sikerült betölteni az eseményeket.
             </p>
           ) : (
-            <EventHeatmap events={events} />
+            <MockWatermark active={isAnalyticsMock}>
+              <EventHeatmap events={events} />
+            </MockWatermark>
           )}
         </section>
       </div>

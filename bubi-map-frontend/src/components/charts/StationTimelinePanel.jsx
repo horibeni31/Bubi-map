@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { SectionTitle } from "../common/SectionTitle";
 import { TimelineChart } from "./Charts";
-import { analyticsApi } from "../../services/analyticsApi";
+import { analyticsApi, isAnalyticsMock } from "../../services/analyticsApi";
+import { MockWatermark } from "../common/MockWatermark";
 
 export function StationTimelinePanel({
   stations,
@@ -77,11 +78,13 @@ export function StationTimelinePanel({
           Nem sikerült betölteni az idősoradatokat: {error.message}
         </p>
       ) : (
-        <TimelineChart
-          key={selectedStation.id}
-          data={history}
-          height={height}
-        />
+        <MockWatermark active={isAnalyticsMock}>
+          <TimelineChart
+            key={selectedStation.id}
+            data={history}
+            height={height}
+          />
+        </MockWatermark>
       )}
       {compact && (
         <div className="mini-metrics">

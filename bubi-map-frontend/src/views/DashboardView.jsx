@@ -1,3 +1,6 @@
+import { MockWatermark } from "../components/common/MockWatermark";
+import { isAnalyticsMock } from "../services/analyticsApi";
+import { isStationDataMock } from "../services/stationApi";
 import { SectionTitle } from "../components/common/SectionTitle";
 import { StatCard } from "../components/common/StatCard";
 import { UsageCharts } from "../components/charts/Charts";
@@ -15,21 +18,26 @@ export function DashboardView({
     <div className="content-grid">
       <section className="card overview-card">
         <SectionTitle>Hálózat pillanatnyi állapota</SectionTitle>
-        <div className="stats-row">
-          <StatCard label="Állomások száma" value="221" />
-          <StatCard label="Kerékpárok összesen" value="1 873" />
-          <StatCard label="Szabad dokkolók" value="2 411" />
-          <StatCard label="Üres állomások" value="7" />
-          <StatCard label="Tele állomások" value="5" />
-        </div>
+        {/* Hardcoded values, not computed from data yet */}
+        <MockWatermark>
+          <div className="stats-row">
+            <StatCard label="Állomások száma" value="221" />
+            <StatCard label="Kerékpárok összesen" value="1 873" />
+            <StatCard label="Szabad dokkolók" value="2 411" />
+            <StatCard label="Üres állomások" value="7" />
+            <StatCard label="Tele állomások" value="5" />
+          </div>
+        </MockWatermark>
       </section>
       <section className="card map-card">
         <SectionTitle>Állomások aktuális állapota</SectionTitle>
-        <StationMap
-          stations={stations}
-          selectedStation={selectedStation}
-          onSelect={onSelect}
-        />
+        <MockWatermark active={isStationDataMock}>
+          <StationMap
+            stations={stations}
+            selectedStation={selectedStation}
+            onSelect={onSelect}
+          />
+        </MockWatermark>
       </section>
       <StationTimelinePanel
         stations={stations}
@@ -39,14 +47,19 @@ export function DashboardView({
       />
       <section className="card usage-card">
         <SectionTitle>Kihasználtság</SectionTitle>
-        <UsageCharts
-          hourlyData={analytics.hourlyUsage}
-          weeklyData={analytics.weeklyUsage}
-        />
+        <MockWatermark active={isAnalyticsMock}>
+          <UsageCharts
+            hourlyData={analytics.hourlyUsage}
+            weeklyData={analytics.weeklyUsage}
+          />
+        </MockWatermark>
       </section>
       <section className="card events-card">
         <SectionTitle>„Üres” és „tele” események hőtérképe</SectionTitle>
-        <EventHeatmapMap stations={stations} />
+        {/* Intensities are generated, only positions are real */}
+        <MockWatermark>
+          <EventHeatmapMap stations={stations} />
+        </MockWatermark>
       </section>
       <section className="card flows-card">
         <SectionTitle>
@@ -61,7 +74,10 @@ export function DashboardView({
               compact
             />
           </div>
-          <FlowRanking />
+          {/* Hardcoded ranking */}
+          <MockWatermark>
+            <FlowRanking />
+          </MockWatermark>
         </div>
       </section>
     </div>
