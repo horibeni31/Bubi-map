@@ -1,7 +1,27 @@
+import logging
+from contextlib import asynccontextmanager
+from datetime import datetime
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from app.database_manager import get_bikes, get_bike, get_station, get_stations
+from app.gbfs_poller import poll_gbfs
+from apscheduler.schedulers.background import BackgroundScheduler
 
-app = FastAPI()
+logging.basicConfig(level=logging.INFO)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # poll every minute, starting immediately
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(poll_gbfs, 'interval', minutes=1, next_run_time=datetime.now(), max_instances=1, coalesce=True)
+    scheduler.start()
+    yield
+    scheduler.shutdown(wait=False)
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 # Data model
@@ -14,53 +34,18 @@ class User(BaseModel):
 users = {}
 
 
-# GET /users
-@app.get("/users")
-def get_users():
-    return users
+@app.get("/bike")
+def get_bikes_endpoint():
+    return get_bikes()
 
+@app.get("/bike/{bike_id}")
+def get_bike_endpoint(bike_id: int):
+    return get_bike(bike_id)
 
-# GET /users/{user_id}
-@app.get("/users/{user_id}")
-def get_user(user_id: int):
-    if user_id not in users:
-        raise HTTPException(status_code=404, detail="User not found")
+@app.get("/station/{station_id}")
+def get_station_endpoint(station_id: int):
+    return get_station(station_id)
 
-    return users[user_id]
-
-
-# POST /users
-@app.post("/users")
-def create_user(user: User):
-    user_id = len(users) + 1
-    users[user_id] = user
-
-    return {
-        "id": user_id,
-        "user": user
-    }
-
-
-# PUT /users/{user_id}
-@app.put("/users/{user_id}")
-def update_user(user_id: int, user: User):
-    if user_id not in users:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    users[user_id] = user
-
-    return {
-        "id": user_id,
-        "user": user
-    }
-
-
-# DELETE /users/{user_id}
-@app.delete("/users/{user_id}")
-def delete_user(user_id: int):
-    if user_id not in users:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    del users[user_id]
-
-    return {"message": "User deleted"}
+@app.get("/stations")
+def get_stations_endpoint():
+    return get_stations()
