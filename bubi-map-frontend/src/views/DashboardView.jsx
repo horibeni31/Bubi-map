@@ -14,20 +14,34 @@ export function DashboardView({
   selectedStation,
   onSelect,
 }) {
+  const networkStats = stations.reduce(
+    (stats, station) => {
+      stats.bikes += station.bikes ?? 0;
+      stats.docks += station.docks ?? 0;
+      if (station.bikes === 0) stats.emptyStations += 1;
+      if (station.docks === 0) stats.fullStations += 1;
+      return stats;
+    },
+    { bikes: 0, docks: 0, emptyStations: 0, fullStations: 0 },
+  );
+
   return (
     <div className="content-grid">
       <section className="card overview-card">
         <SectionTitle>Hálózat pillanatnyi állapota</SectionTitle>
-        {/* Hardcoded values, not computed from data yet */}
-        <MockWatermark>
           <div className="stats-row">
-            <StatCard label="Állomások száma" value="221" />
-            <StatCard label="Kerékpárok összesen" value="1 873" />
-            <StatCard label="Szabad dokkolók" value="2 411" />
-            <StatCard label="Üres állomások" value="7" />
-            <StatCard label="Tele állomások" value="5" />
+            <StatCard label="Állomások száma" value={stations.length} />
+            <StatCard
+              label="Kerékpárok összesen"
+              value={networkStats.bikes}
+            />
+            <StatCard
+              label="Szabad dokkolók"
+              value={networkStats.docks}
+            />
+            <StatCard label="Üres állomások" value={networkStats.emptyStations} />
+            <StatCard label="Tele állomások" value={networkStats.fullStations} />
           </div>
-        </MockWatermark>
       </section>
       <section className="card map-card">
         <SectionTitle>Állomások aktuális állapota</SectionTitle>
@@ -55,7 +69,7 @@ export function DashboardView({
         </MockWatermark>
       </section>
       <section className="card events-card">
-        <SectionTitle>„Üres” és „tele” események hőtérképe</SectionTitle>
+        <SectionTitle>Üres és tele események hőtérképe</SectionTitle>
         {/* Intensities are generated, only positions are real */}
         <MockWatermark>
           <EventHeatmapMap stations={stations} />

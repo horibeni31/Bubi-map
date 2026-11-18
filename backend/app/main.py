@@ -4,7 +4,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from app.database_manager import get_bikes, get_bike, get_station, get_stations
+from app.database_manager import get_bikes, get_bike, get_station, get_stations, get_station_history
 from app.gbfs_poller import poll_gbfs
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -52,3 +52,10 @@ def get_station_endpoint(station_id: str):
 @app.get("/stations")
 def get_stations_endpoint():
     return get_stations()
+
+@app.get("/stations/{station_id}/history")
+def get_station_history_endpoint(station_id: str):
+    history = get_station_history(station_id)
+    if history is None:
+        raise HTTPException(status_code=404, detail="Station not found")
+    return history

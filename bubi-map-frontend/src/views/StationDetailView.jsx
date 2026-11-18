@@ -6,7 +6,11 @@ import {
   TimelineChart,
 } from "../components/charts/Charts";
 import { statusInfo } from "../data/mockData";
-import { analyticsApi, isAnalyticsMock } from "../services/analyticsApi";
+import {
+  analyticsApi,
+  isAnalyticsMock,
+  isStationHistoryMock,
+} from "../services/analyticsApi";
 import { MockWatermark } from "../components/common/MockWatermark";
 
 export function StationDetailView({ station, stations = [], onSelect }) {
@@ -101,8 +105,13 @@ export function StationDetailView({ station, stations = [], onSelect }) {
               Nem sikerült betölteni az idősoradatokat: {historyError.message}
             </p>
           ) : (
-            <MockWatermark active={isAnalyticsMock}>
-              <TimelineChart key={current.id} data={history} height={240} />
+            <MockWatermark active={isStationHistoryMock}>
+              <TimelineChart
+                key={current.id}
+                data={history}
+                height={240}
+                capacity={current.capacity}
+              />
             </MockWatermark>
           )}
         </section>

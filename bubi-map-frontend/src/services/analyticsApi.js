@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_ANALYTICS !== "false";
 
 export const isAnalyticsMock = USE_MOCK_DATA;
+export const isStationHistoryMock = false;
 
 async function request(path) {
   const response = await fetch(`${API_BASE_URL}${path}`);
@@ -25,16 +26,8 @@ export const analyticsApi = {
     return request("/analytics/overview");
   },
   async getStationHistory(stationId) {
-    if (USE_MOCK_DATA) {
-      const offset = (stationId % 4) - 1;
-
-      return timeline.map((point, index) => ({
-        ...point,
-        bikes: Math.max(0, point.bikes + offset * 2 + (stationId % 3)),
-        docks: Math.max(0, point.docks - offset + ((index + stationId) % 2)),
-      }));
-    }
-    return request(`/stations/${stationId}/history`);
+    const response = await request(`/stations/${stationId}/history`);
+    return response.history;
   },
   async getStationUtilization(stationId) {
     if (USE_MOCK_DATA) {
