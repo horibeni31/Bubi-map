@@ -37,6 +37,7 @@ function toUiStation(station) {
     capacity,
     status: getStatus(bikes, docks, capacity),
     lastReported: station.last_reported,
+    feedUpdatedAt: station.feed_updated_at,
   };
 }
 

@@ -71,6 +71,38 @@ def get_station(station_id: str):
         conn.close()
 
 
+def get_station_history(station_id: str):
+    """Return the station's status snapshots from the last 24 hours."""
+    conn = connect_to_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT floor(extract(epoch FROM ss.feed_updated_at) * 1000)::bigint,
+                       to_char(ss.feed_updated_at AT TIME ZONE 'Europe/Budapest', 'HH24:MI'),
+                       ss.num_bikes_available, ss.num_docks_available
+                FROM stations s
+                LEFT JOIN station_status ss
+                    ON ss.station_id = s.station_id
+                    AND ss.feed_updated_at >= now() - INTERVAL '24 hours'
+                WHERE s.station_id = %s
+                ORDER BY ss.feed_updated_at ASC
+            """, (station_id,))
+            rows = cur.fetchall()
+            if not rows:
+                return None
+
+            return {
+                "station_id": station_id,
+                "history": [
+                    {"timestamp": timestamp, "time": time, "bikes": bikes, "docks": docks}
+                    for timestamp, time, bikes, docks in rows
+                    if time is not None
+                ],
+            }
+    finally:
+        conn.close()
+
+
 def connect_to_db():
     return psycopg2.connect(DATABASE_URL)
 
